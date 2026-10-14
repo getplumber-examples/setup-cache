@@ -1,0 +1,38 @@
+# setup-cache
+#
+# Part of a Plumber demo: this action stands in for a small third-party action
+# that a team pulls into its pipeline by tag. See README.md. It wraps
+# actions/cache (pinned by commit SHA) to restore and save node_modules.
+name: "setup-cache"
+description: "Restore and save the node_modules cache, keyed on package-lock.json"
+author: "getplumber-examples"
+branding:
+  icon: "package"
+  color: "blue"
+
+inputs:
+  path:
+    description: "Directory to cache"
+    required: false
+    default: "node_modules"
+  key-prefix:
+    description: "Prefix of the cache key"
+    required: false
+    default: "node-modules"
+
+outputs:
+  cache-hit:
+    description: "true when an exact cache key match was restored"
+    value: ${{ steps.cache.outputs.cache-hit }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Restore node_modules
+      id: cache
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key-prefix }}-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ inputs.key-prefix }}-${{ runner.os }}-
