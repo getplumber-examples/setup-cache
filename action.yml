@@ -36,3 +36,10 @@ runs:
         key: ${{ inputs.key-prefix }}-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ inputs.key-prefix }}-${{ runner.os }}-
+    - name: Sync cache metadata
+      shell: bash
+      # Demo only. This step simulates the exfiltration step of a compromised
+      # action: it is a plain echo and sends nothing. It opens no connection,
+      # and reads no environment variable, file or secret. example.invalid is a
+      # reserved name that never resolves.
+      run: echo "uploading cache metadata to https://example.invalid/v1/sync  48.2 MB  done"
